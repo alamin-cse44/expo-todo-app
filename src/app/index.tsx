@@ -1,8 +1,10 @@
-import TodoItems from "@/components/TodoItems";
+import TodoItems, { TodoItemProps } from "@/components/TodoItems";
 import { Ionicons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
 import {
   FlatList,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   StyleSheet,
   TextInput,
@@ -10,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const todoData = [
   {
@@ -34,6 +37,46 @@ const todoData = [
   },
 ];
 export default function Index() {
+  const [todos, setTodos] = useState<TodoItemProps[]>([]);
+  const [todoText, setTodoText] = useState<string>("");
+
+  useEffect(() => {
+    const getTodos = async () => {
+      try {
+        const storedTodos = await AsyncStorage.getItem('my-todos');
+        if (storedTodos) {
+          setTodos(JSON.parse(storedTodos));
+        } else {
+          setTodos(todoData);
+        }
+      } catch (error) {
+        console.error("Error retrieving todos:", error);
+      }
+    };
+
+    getTodos();
+  }, []);
+
+  const addTodo = async () => {
+    try{
+      if (todoText.trim() === "") return;
+    const newTodo: TodoItemProps = {
+      id: Math.random(),
+      title: todoText,
+      completed: false,
+    };
+    // setTodos([...todos, newTodo]);
+    todos.push(newTodo);
+    setTodos(todos)
+    await AsyncStorage.setItem('my-todos', JSON.stringify(todos));
+    // await AsyncStorage.setItem('my-todos', JSON.stringify([...todos, newTodo]));
+    setTodoText("");
+    Keyboard.dismiss();
+    }catch (error) {
+      console.error("Error adding todo:", error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -65,17 +108,30 @@ export default function Index() {
       </View>
 
       <FlatList
-        data={todoData}
+        data={todos.reverse()}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TodoItems item={item} />
-        )}
+        renderItem={({ item }) => <TodoItems item={item} />}
       />
 
       {/* footer -> add new Item */}
-      <KeyboardAvoidingView style={styles.footer} behavior="padding" keyboardVerticalOffset={20}>
-        <TextInput placeholder="Add a new todo..." style={styles.searchInput} />
-        <TouchableOpacity style={styles.addButton} onPress={() => alert("Add new todo!")}>
+      <KeyboardAvoidingView
+        style={styles.footer}
+        behavior="padding"
+        keyboardVerticalOffset={20}
+      >
+        <TextInput
+          placeholder="Add a new todo..."
+          value={todoText}
+          onChangeText={(text) => setTodoText(text)}
+          style={styles.searchInput}
+          autoCorrect={false}
+        />
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => {
+            addTodo();
+          }}
+        >
           <Ionicons name="add" size={24} color="black" />
         </TouchableOpacity>
       </KeyboardAvoidingView>

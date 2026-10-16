@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Checkbox } from "expo-checkbox";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-type TodoItemProps = {
+export type TodoItemProps = {
   id: number;
   title: string;
   completed: boolean;
