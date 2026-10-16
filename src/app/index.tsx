@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Checkbox } from "expo-checkbox";
 import {
   FlatList,
   Image,
@@ -67,9 +68,35 @@ export default function Index() {
         data={todoData}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <Text style={{ fontWeight: "bold" }}>{item.title}</Text>
+          <View style={styles.todoContainer}>
+            <View style={styles.todoItem}>
+              <Checkbox
+                value={item.completed}
+                onValueChange={() => alert(`Todo ${item.id} toggled!`)}
+              />
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  textDecorationLine: item.completed ? "line-through" : "none",
+                }}
+              >
+                {item.title}
+              </Text>
+            </View>
+            <TouchableOpacity onPress={() => alert(`Todo ${item.id} deleted!`)}>
+              <Ionicons name="trash" size={24} color="red" />
+            </TouchableOpacity>
+          </View>
         )}
       />
+
+      {/* footer -> add new Item */}
+      <View style={styles.footer}>
+        <TextInput placeholder="Add a new todo..." style={styles.searchInput} />
+        <TouchableOpacity onPress={() => alert("Add new todo!")}>
+          <Ionicons name="add" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -100,5 +127,30 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: "black",
-  }
+    // backgroundColor: "red",
+  },
+  todoContainer: {
+    backgroundColor: "white",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: "#000",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  todoItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  footer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
+    backgroundColor: "white",
+    borderTopWidth: 1,
+    borderTopColor: "#ccc",
+  },
 });
