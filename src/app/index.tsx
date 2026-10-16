@@ -1,10 +1,10 @@
+import TodoItems from "@/components/TodoItems";
 import { Ionicons } from "@expo/vector-icons";
-import { Checkbox } from "expo-checkbox";
 import {
   FlatList,
   Image,
+  KeyboardAvoidingView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -68,35 +68,17 @@ export default function Index() {
         data={todoData}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.todoContainer}>
-            <View style={styles.todoItem}>
-              <Checkbox
-                value={item.completed}
-                onValueChange={() => alert(`Todo ${item.id} toggled!`)}
-              />
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  textDecorationLine: item.completed ? "line-through" : "none",
-                }}
-              >
-                {item.title}
-              </Text>
-            </View>
-            <TouchableOpacity onPress={() => alert(`Todo ${item.id} deleted!`)}>
-              <Ionicons name="trash" size={24} color="red" />
-            </TouchableOpacity>
-          </View>
+          <TodoItems item={item} />
         )}
       />
 
       {/* footer -> add new Item */}
-      <View style={styles.footer}>
+      <KeyboardAvoidingView style={styles.footer} behavior="padding" keyboardVerticalOffset={20}>
         <TextInput placeholder="Add a new todo..." style={styles.searchInput} />
-        <TouchableOpacity onPress={() => alert("Add new todo!")}>
+        <TouchableOpacity style={styles.addButton} onPress={() => alert("Add new todo!")}>
           <Ionicons name="add" size={24} color="black" />
         </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -148,9 +130,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
+    padding: 10,
     backgroundColor: "white",
     borderTopWidth: 1,
     borderTopColor: "#ccc",
+    marginBottom: 10,
+  },
+  addButton: {
+    backgroundColor: "lightgray",
+    borderRadius: 8,
+    padding: 8,
   },
 });
