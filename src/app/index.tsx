@@ -1,4 +1,5 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const todoData = [
@@ -26,6 +27,13 @@ const todoData = [
 export default function Index() {
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Ionicons name="menu" size={32} color="black" />
+        <Image
+          source={{ uri: "https://via.placeholder.com/60" }}
+          style={{ width: 60, height: 60, borderRadius: 30 }}
+        />
+      </View>
       <FlatList
         data={todoData}
         keyExtractor={(item) => item.id.toString()}
@@ -40,7 +48,12 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 16,
+    backgroundColor: "#f5f5f5",
+  },
+  header: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
   },
 });
