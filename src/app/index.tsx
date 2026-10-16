@@ -1,5 +1,6 @@
 import TodoItems, { TodoItemProps } from "@/components/TodoItems";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import {
   FlatList,
@@ -12,7 +13,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const todoData = [
   {
@@ -39,13 +39,17 @@ const todoData = [
 export default function Index() {
   const [todos, setTodos] = useState<TodoItemProps[]>([]);
   const [todoText, setTodoText] = useState<string>("");
+  // implement the search query state
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [oldTodos, setOldTodos] = useState<TodoItemProps []>([]);
 
   useEffect(() => {
     const getTodos = async () => {
       try {
-        const storedTodos = await AsyncStorage.getItem('my-todos');
+        const storedTodos = await AsyncStorage.getItem("my-todos");
         if (storedTodos) {
           setTodos(JSON.parse(storedTodos));
+          setOldTodos(JSON.parse(storedTodos));
         } else {
           setTodos(todoData);
         }
@@ -58,24 +62,39 @@ export default function Index() {
   }, []);
 
   const addTodo = async () => {
-    try{
+    try {
       if (todoText.trim() === "") return;
-    const newTodo: TodoItemProps = {
-      id: Math.random(),
-      title: todoText,
-      completed: false,
-    };
-    // setTodos([...todos, newTodo]);
-    todos.push(newTodo);
-    setTodos(todos)
-    await AsyncStorage.setItem('my-todos', JSON.stringify(todos));
-    // await AsyncStorage.setItem('my-todos', JSON.stringify([...todos, newTodo]));
-    setTodoText("");
-    Keyboard.dismiss();
-    }catch (error) {
+      const newTodo: TodoItemProps = {
+        id: Math.random(),
+        title: todoText,
+        completed: false,
+      };
+      // setTodos([...todos, newTodo]);
+      todos.push(newTodo);
+      setTodos(todos);
+      await AsyncStorage.setItem("my-todos", JSON.stringify(todos));
+      // await AsyncStorage.setItem('my-todos', JSON.stringify([...todos, newTodo]));
+      setTodoText("");
+      Keyboard.dismiss();
+    } catch (error) {
       console.error("Error adding todo:", error);
     }
   };
+
+  const onSearch = (query: string) => {
+    if (query == "") {
+      setTodos(oldTodos);
+    } else {
+      const filteredTodos = todos.filter((todo) =>
+        todo.title.toLowerCase().includes(query.toLowerCase())
+      );
+      setTodos(filteredTodos);
+    }
+  };
+
+  useEffect(() => {
+    onSearch(searchQuery);
+  }, [searchQuery]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -102,6 +121,8 @@ export default function Index() {
         />
         <TextInput
           placeholder="Search todos..."
+          value={searchQuery}
+          onChangeText={(text) => setSearchQuery(text)}
           style={styles.searchInput}
           clearButtonMode="always"
         />
