@@ -1,4 +1,5 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const todoData = [
   {
@@ -24,7 +25,7 @@ const todoData = [
 ];
 export default function Index() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <FlatList
         data={todoData}
         keyExtractor={(item) => item.id.toString()}
@@ -32,7 +33,7 @@ export default function Index() {
           <Text style={{ fontWeight: "bold" }}>{item.title}</Text>
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
