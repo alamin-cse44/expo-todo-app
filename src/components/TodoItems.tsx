@@ -31,12 +31,34 @@ export default function TodoItems({
       console.error("Error deleting todo:", error);
     }
   };
+
+  // Function to toggle the completed status of a todo item
+  const handleCompletedChange = async (id: number) => {
+    try {
+      const storedTodos = await AsyncStorage.getItem("my-todos");
+      if (storedTodos) {
+        const todos = JSON.parse(storedTodos);
+        const updatedTodos = todos.map((todo: TodoItemProps) => {
+          if (todo.id === id) {
+            alert(`Todo ${id} completed status toggled!`);
+            return { ...todo, completed: !todo.completed };
+          }
+          return todo;
+        });
+        await AsyncStorage.setItem("my-todos", JSON.stringify(updatedTodos));
+        setTodos(updatedTodos); // Update the state after toggling completion
+      }
+    } catch (error) {
+      console.error("Error updating todo:", error);
+    }
+  };
+
   return (
     <View style={styles.todoContainer}>
       <View style={styles.todoItem}>
         <Checkbox
           value={item.completed}
-          onValueChange={() => alert(`Todo ${item.id} toggled!`)}
+          onValueChange={() => handleCompletedChange(item.id)}
         />
         <Text
           style={{
@@ -47,7 +69,12 @@ export default function TodoItems({
           {item.title}
         </Text>
       </View>
-      <TouchableOpacity onPress={() => deleteTodo(item.id)}>
+      <TouchableOpacity
+        onPress={() => {
+          deleteTodo(item.id);
+          alert(`Todo ${item.id} deleted!`);
+        }}
+      >
         <Ionicons name="trash" size={24} color="red" />
       </TouchableOpacity>
     </View>
