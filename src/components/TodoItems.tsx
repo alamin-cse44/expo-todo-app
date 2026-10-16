@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Checkbox } from "expo-checkbox";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -8,7 +9,28 @@ export type TodoItemProps = {
   completed: boolean;
 };
 
-export default function TodoItems({ item }: { item: TodoItemProps }) {
+export default function TodoItems({
+  item,
+  setTodos,
+}: {
+  item: TodoItemProps;
+  setTodos: React.Dispatch<React.SetStateAction<TodoItemProps[]>>;
+}) {
+  const deleteTodo = async (id: number) => {
+    try {
+      const storedTodos = await AsyncStorage.getItem("my-todos");
+      if (storedTodos) {
+        const todos = JSON.parse(storedTodos);
+        const updatedTodos = todos.filter(
+          (todo: TodoItemProps) => todo.id !== id,
+        );
+        await AsyncStorage.setItem("my-todos", JSON.stringify(updatedTodos));
+        setTodos(updatedTodos); // Update the state after deletion
+      }
+    } catch (error) {
+      console.error("Error deleting todo:", error);
+    }
+  };
   return (
     <View style={styles.todoContainer}>
       <View style={styles.todoItem}>
@@ -25,7 +47,7 @@ export default function TodoItems({ item }: { item: TodoItemProps }) {
           {item.title}
         </Text>
       </View>
-      <TouchableOpacity onPress={() => alert(`Todo ${item.id} deleted!`)}>
+      <TouchableOpacity onPress={() => deleteTodo(item.id)}>
         <Ionicons name="trash" size={24} color="red" />
       </TouchableOpacity>
     </View>
@@ -91,3 +113,6 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
+function setTodos(updatedTodos: any) {
+  throw new Error("Function not implemented.");
+}

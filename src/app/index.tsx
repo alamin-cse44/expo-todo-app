@@ -110,7 +110,7 @@ export default function Index() {
       <FlatList
         data={todos.reverse()}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <TodoItems item={item} />}
+        renderItem={({ item }) => <TodoItems item={item} setTodos={setTodos} />}
       />
 
       {/* footer -> add new Item */}
