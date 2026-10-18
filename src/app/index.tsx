@@ -136,9 +136,12 @@ export default function Index() {
       />
 
       {/* test native wind */}
-      <View className="flex-1 items-center justify-center bg-white -mt-10">
+      <View className="flex-1 items-center px-10 bg-white mb-10 flex-row justify-between">
         <Text className="text-xl font-bold text-blue-500">
-          Welcome to Nativewind! okay
+          Welcome to Nativewind.
+        </Text>
+        <Text className="text-xl font-bold text-blue-500">
+          okay!
         </Text>
       </View>
 
