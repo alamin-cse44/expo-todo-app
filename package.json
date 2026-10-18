@@ -46,12 +46,5 @@
     "web": "expo start --web",
     "lint": "expo lint"
   },
-  "private": true,
-
-  "expo": {
-    "web": {
-      "bundler": "metro"
-    }
-  }
-
+  "private": true
 }
