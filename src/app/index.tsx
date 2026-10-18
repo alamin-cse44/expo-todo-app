@@ -8,6 +8,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -41,7 +42,7 @@ export default function Index() {
   const [todoText, setTodoText] = useState<string>("");
   // implement the search query state
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [oldTodos, setOldTodos] = useState<TodoItemProps []>([]);
+  const [oldTodos, setOldTodos] = useState<TodoItemProps[]>([]);
 
   useEffect(() => {
     const getTodos = async () => {
@@ -86,7 +87,7 @@ export default function Index() {
       setTodos(oldTodos);
     } else {
       const filteredTodos = todos.filter((todo) =>
-        todo.title.toLowerCase().includes(query.toLowerCase())
+        todo.title.toLowerCase().includes(query.toLowerCase()),
       );
       setTodos(filteredTodos);
     }
@@ -133,6 +134,13 @@ export default function Index() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <TodoItems item={item} setTodos={setTodos} />}
       />
+
+      {/* test native wind */}
+      <View className="flex-1 items-center justify-center bg-white -mt-10">
+        <Text className="text-xl font-bold text-blue-500">
+          Welcome to Nativewind! okay
+        </Text>
+      </View>
 
       {/* footer -> add new Item */}
       <KeyboardAvoidingView
