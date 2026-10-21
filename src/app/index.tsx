@@ -1,4 +1,5 @@
 import TodoItems, { TodoItemProps } from "@/components/TodoItems";
+import { useAuth } from "@clerk/expo";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
@@ -14,6 +15,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Redirect } from "expo-router";
 
 const todoData = [
   {
@@ -38,6 +40,7 @@ const todoData = [
   },
 ];
 export default function Index() {
+  const {isSignedIn, isLoaded} = useAuth()
   const [todos, setTodos] = useState<TodoItemProps[]>([]);
   const [todoText, setTodoText] = useState<string>("");
   // implement the search query state
@@ -96,6 +99,12 @@ export default function Index() {
   useEffect(() => {
     onSearch(searchQuery);
   }, [searchQuery]);
+
+  if (!isLoaded) return null;
+
+  if (!isSignedIn) {
+    return <Redirect href="/(auth)/sign-in" />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -170,6 +179,7 @@ export default function Index() {
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
